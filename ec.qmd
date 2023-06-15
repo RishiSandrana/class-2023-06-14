@@ -4,7 +4,6 @@ author: "Rishi Sandrana"
 format: html
 ---
 
-
 ```{r}
 #| echo: false
 #| message: false
@@ -12,6 +11,14 @@ library(tidyverse)
 ```
 
 ```{r}
-
+#| echo: false
+#| message: false
+x <- read_csv(file = "data/social_capital_county.csv")
+x |> separate_wider_delim(
+    cols = county_name, 
+    delim = ", ", 
+    names = c("county_name", "state_name")
+  ) |>
+  group_by(state_name) |>
+  select(county_name, ec_county, pop2018)
 ```
-
