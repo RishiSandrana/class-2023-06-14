@@ -20,5 +20,13 @@ x |> separate_wider_delim(
     names = c("county_name", "state_name")
   ) |>
   group_by(state_name) |>
-  select(county_name, ec_county, pop2018)
+  select(county_name, ec_county, pop2018) |>
+  summarize(
+    avg_connectedness = mean(ec_county, na.rm = TRUE),
+    total_population = sum(pop2018, na.rm = TRUE)
+  ) |>
+  ggplot(aes(x = total_population, y = avg_connectedness)) + 
+  geom_point() + 
+  scale_x_log10(labels = scales::comma_format()) + 
+  geom_smooth(method = "lm", se = FALSE)
 ```
