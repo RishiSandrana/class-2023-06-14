@@ -28,5 +28,11 @@ x |> separate_wider_delim(
   ggplot(aes(x = total_population, y = avg_connectedness)) + 
   geom_point() + 
   scale_x_log10(labels = scales::comma_format()) + 
-  geom_smooth(method = "lm", se = FALSE)
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(
+    x = "State Population",
+    y = "Average County Economic Connectedness",
+    title = "Economic Connectedness and Population in US States",
+    subtitle = "Bigger states have counties with lower average economic connectedness"
+  )
 ```
