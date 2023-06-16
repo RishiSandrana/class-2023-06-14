@@ -14,25 +14,31 @@ library(tidyverse)
 #| echo: false
 #| message: false
 x <- read_csv(file = "data/social_capital_county.csv")
-x |> separate_wider_delim(
+data <- x |> separate_wider_delim(
     cols = county_name, 
     delim = ", ", 
     names = c("county_name", "state_name")
   ) |>
-  group_by(state_name) |>
-  select(county_name, ec_county, pop2018) |>
+  select(state_name, county_name, ec_county, pop2018) |>
   summarize(
     avg_connectedness = mean(ec_county, na.rm = TRUE),
-    total_population = sum(pop2018, na.rm = TRUE)
-  ) |>
-  ggplot(aes(x = total_population, y = avg_connectedness)) + 
+    total_population = sum(pop2018, na.rm = TRUE),
+    .by = state_name
+  ) 
+  
+  lm_model <- lm(avg_connectedness ~ total_population, data = data)
+  equation <- paste("y =", round(coef(lm_model)[1], 2), "+", round(coef(lm_model)[2], 2), "x")
+  r_squared <- round(summary(lm_model)$r.squared, 2)
+
+  ggplot(data, aes(x = total_population, y = avg_connectedness)) + 
   geom_point() + 
-  scale_x_log10(labels = scales::comma_format()) + 
+  scale_x_log10(labels = scales::comma_format(), breaks = c(1000000, 10000000)) + 
   geom_smooth(method = "lm", se = FALSE) + 
   labs(
     x = "State Population",
     y = "Average County Economic Connectedness",
     title = "Economic Connectedness and Population in US States",
-    subtitle = "Bigger states have counties with lower average economic connectedness"
+    subtitle = "Bigger states have counties with lower average economic connectedness",
+    caption = paste("Equation:", equation, "\nR-squared:", r_squared)
   )
 ```
